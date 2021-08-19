@@ -1,0 +1,84 @@
+# GRIP : The Sparks Foundation
+
+DOMAIN : Data Science and Business Analytics
+
+INTERN : Vanshika Agrawal
+
+Task 1 : Prediction using Supervised ML
+Description : In this task, we have to predict the percentage of a student based on the number of hours he/she studies.
+              The task has 2 variables where the feature is the no. of hours studied and the target value is the percentage                   score.
+              This can be solved using a simple linear regression.
+
+
+#Importing required libraries
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+#Reading data from remote url
+url="http://bit.ly/w-data"
+data=pd.read_csv(url)
+
+#Exploring Data
+print(data.shape)
+data.head()
+
+#Basic information about data
+data.describe()
+
+data.info()
+
+data.plot(kind='scatter',x='Hours',y='Scores');
+plt.show()
+
+data.corr(method='pearson')
+
+data.corr(method='spearman')
+
+hours=data['Hours']
+scores=data['Scores']
+
+sns.distplot(hours)
+
+sns.distplot(scores)
+
+# Linear Regression
+
+X = data.iloc[:,:-1].values
+Y = data.iloc[:,1].values
+
+from sklearn.model_selection import train_test_split
+X_train, X_test, Y_train, Y_test = train_test_split(X,Y,test_size=0.2,random_state=50)
+
+from sklearn.linear_model import LinearRegression
+reg=LinearRegression()
+reg.fit(X_train,Y_train)
+
+m=reg.coef_
+c=reg.intercept_
+line=m*X+c
+plt.scatter(X,Y)
+plt.plot(X,line);
+plt.show
+
+Y_pred=reg.predict(X_test)
+
+actual_predicted=pd.DataFrame({'Target':Y_test,'Predicted':Y_pred})
+actual_predicted
+
+sns.set_style('whitegrid')
+sns.distplot(np.array(Y_test-Y_pred))
+plt.show()
+
+What would be the predicted score if a student studies for 9 hours/day?
+
+h=9.0
+s=reg.predict([[h]])
+print("If a student studies for {} hours per day he/she will score {} % in exam.".format(h,s))
+
+from sklearn import metrics
+from sklearn.metrics import r2_score
+print('Mean Absolute Error:',metrics.mean_absolute_error(Y_test,Y_pred))
+print('R2 Score:',r2_score(Y_test,Y_pred))
+
